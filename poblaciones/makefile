@@ -1,7 +1,7 @@
 n_steps = 15000 
 n_burn = 2000
 
-all: poblaciones.py
+all: poblaciones.pdf
 
 poblaciones.pdf: poblaciones.dat 
 	python poblaciones.py
