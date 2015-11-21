@@ -20,7 +20,6 @@ plt.ylabel(r'$\beta$' )
 
 plt.subplot(2,3,2)
 plt.scatter(a,c)
-plt.title(u"Comparación de parámetros")
 plt.xlabel(r'$\alpha$' )
 plt.ylabel(r'$\gamma$' )
 

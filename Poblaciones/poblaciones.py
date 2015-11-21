@@ -43,4 +43,4 @@ plt.scatter(c,d)
 plt.xlabel(r'$\gamma$' )
 plt.ylabel(r'$\delta$' )
 
-savefig("poblaciones.pdf",dpi = 400)
+plt.savefig("poblaciones.pdf",dpi = 400)

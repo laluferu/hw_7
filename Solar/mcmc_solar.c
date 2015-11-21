@@ -98,7 +98,6 @@ int main (int argc, char **argv)
 	int j;
 	for (j = 0; j < datos; j++)
 	{	
-		if (j>corte){
 		srand((unsigned)time(NULL));
 		const gsl_rng_type * T;
     		gsl_rng * r;
@@ -107,13 +106,13 @@ int main (int argc, char **argv)
    		r = gsl_rng_alloc (T);
 
 		// cambios al azar
-		a2 = a + gsl_ran_gaussian(r,drand48());
+		a2 = a + (2*gsl_ran_gaussian(r,drand48())+1);
 		srand((unsigned)time(NULL));
-		b2 = b + gsl_ran_gaussian(r,drand48());
+		b2 = b + (2*gsl_ran_gaussian(r,drand48())+1);
 		srand((unsigned)time(NULL));
-		c2 = c + gsl_ran_gaussian(r,drand48());
+		c2 = c + (2*gsl_ran_gaussian(r,drand48())+1);
 		srand((unsigned)time(NULL));
-		d2 = d + gsl_ran_gaussian(r,drand48());
+		d2 = d + (2*gsl_ran_gaussian(r,drand48())+1);
 
 		funcion (1);
 		funcion(2); //calculo de las nuevas y.
@@ -126,31 +125,31 @@ int main (int argc, char **argv)
 
 		if(dif2 < dif1)
 		{
-			printf ("%g,%g,%g,%g\n", a2, b2,c2, d2);
 			a = a2;
 			b = b2;
 			c = c2;
 			d = d2;
+			if (j>corte) {printf ("%g,%g,%g,%g\n",a,b,c,d);}
 		}
 		else
 		{	srand((unsigned)time(NULL));
 			double beta = drand48(); // Otro valor al azar
 			if (beta >= alpha)
 			{
-				printf ("%g,%g,%g,%g\n", a2, b2 ,c2, d2);
 				a = a2;
 				b = b2;
 				c = c2;
 				d = d2;
+				if (j>corte) {printf ("%g,%g,%g,%g\n",a,b,c,d);}
 			}
-			else
+			else if (j>corte)
 			{
 				printf ("%g,%g,%g,%g\n", a, b ,c, d);
 			}
 
 		}
-	}}
-printf("%g %g\n", t[0],y_real[0]);
+	}
+
 return 0;
 }
 

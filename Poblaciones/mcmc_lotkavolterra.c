@@ -14,14 +14,14 @@
 #define USAGE "./mcmc_lotkavolterra.x n_steps n_burn"
 
 void leer(double *tiempo, double *presa, double *depredador, int n_puntos);
-void iniciar(double *lista, int n_puntos);
+double* iniciar(int n_puntos);
 
 int main (int argc, char **argv)
 {	
 	int i=0;
 	int lineas = 0;
 	int iteraciones = atof(argv[2])+atof(argv[1]);
-	int corte = atof(argv[1]);
+	int corte = atof(argv[2]);
 
 	double a = 1;
 	double b = 1;
@@ -49,20 +49,13 @@ int main (int argc, char **argv)
 
 	lineas --;// menos la primera línea
 
-	double x[lineas];
-	iniciar(x,lineas);
-	double y[lineas];
-	iniciar(y,lineas);
-	double x_real[lineas];
-	iniciar(x_real,lineas);
-	double y_real[lineas];
-	iniciar(y_real,lineas);
-	double t[lineas];
-	iniciar(t,lineas);
-	double lay[lineas];
-	iniciar(lay,lineas);
-	double lax[lineas];
-	iniciar(lax,lineas);
+	double *x = iniciar(lineas);
+	double *y= iniciar(lineas);
+	double *x_real=	iniciar(lineas);
+	double *y_real = iniciar(lineas);
+	double *t = iniciar(lineas);
+	double *lay = iniciar(lineas);
+	double *lax = iniciar(lineas);
 
 	leer(t,x_real,y_real,lineas);
 	lay[0]=y_real[0];
@@ -154,26 +147,25 @@ int main (int argc, char **argv)
 
 	void mcmc()
 	{
-		i = 0;
-		for (i = 1; i < iteraciones; i++)
-		{
-			if (i>corte){
+		int k = 1;
+		for (k = 1; k < iteraciones; k++)
+		{	
     			const gsl_rng_type * T;
     			gsl_rng * r;
    			gsl_rng_env_setup();
     			T = gsl_rng_default;
    			r = gsl_rng_alloc (T);
 
-			a2 = a + gsl_ran_gaussian(r,drand48());
+			a2 = a + (2*gsl_ran_gaussian(r,drand48())+1);
 			srand((unsigned)time(NULL));
-			b2 = b + gsl_ran_gaussian(r,drand48());
+			b2 = b + (2*gsl_ran_gaussian(r,drand48())+1);
 			srand((unsigned)time(NULL));
-			c2 = c + gsl_ran_gaussian(r,drand48());
+			c2 = c + (2*gsl_ran_gaussian(r,drand48())+1);
 			srand((unsigned)time(NULL));
-			d2 = d + gsl_ran_gaussian(r,drand48());
+			d2 = d + (2*gsl_ran_gaussian(r,drand48())+1);
 			srand((unsigned)time(NULL));
 
-			kutta(a,b,c,d);
+			kutta4(a,b,c,d);
 			
 			int j =0;
 
@@ -183,22 +175,23 @@ int main (int argc, char **argv)
 				y[j] = lay[j];
    			}
 
-			kutta(a2,b2,c2,d2);
+			kutta4(a2,b2,c2,d2);
 
 			// Calculo de los errores y similitudes
 			double difvieja = parecido(1);
 			double difnueva = parecido(2);
 
-			if (difvieja<difnueva)
+			if (difnueva < difvieja)
 			{
 				a=a2;
         	    		b=b2;
         	   		c=c2;
         	    		d=d2;
-				printf ("%g,%g,%g,%g\n",a,b,c,d);
+				if (k>corte) {printf ("%g,%g,%g,%g\n",a,b,c,d);}
 			}
 			else
 			{	
+
 				srand((unsigned)time(NULL));
 				double alfa = difvieja/difnueva;
 				double beta = drand48(); 
@@ -209,17 +202,17 @@ int main (int argc, char **argv)
         	    			b=b2;
         	   			c=c2;
         	    			d=d2;
-					printf ("%g,%g,%g,%g\n",a,b,c,d);
+					if (k>corte) {printf ("%g,%g,%g,%g\n",a,b,c,d);}
 				}
-				else
+				else if (k>corte)
 				{
 					printf ("%g,%g,%g,%g\n",a,b,c,d);
 				}	
 			}
-			}
 		}
 	}
 
+	mcmc();
 	return 0;
 }
 
@@ -235,12 +228,19 @@ void leer(double *tiempo, double *presa, double *depredador, int n_puntos)
 	}
 	fclose(file);
 }
-void iniciar(double *lista, int n_puntos)
+
+double* iniciar(int n_puntos)
 {	
-	int k = 0;
-	for(k=0;k<n_puntos;k++)
+	double *array;
+	int i;
+	if(!(array = malloc(n_puntos * sizeof(double))))
 	{
-		lista[k] = 0.0;
-	}
-	
+    		printf("Problema en reserva\n");
+    		exit(1);
+  	}
+  	for(i=0;i<n_puntos;i++)
+	{
+  	array[i] = 0.0;
+  	}
+  return array;
 }
