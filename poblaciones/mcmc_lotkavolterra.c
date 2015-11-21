@@ -222,6 +222,7 @@ void leer(double *tiempo, double *presa, double *depredador, int n_puntos)
 	int j;
 	file = fopen("lotka_volterra_obs.dat", "r");
 	rewind(file);
+	fscanf(file,"%*[^\n]\n"); //Lee cualquier cosa en la primera línea
 	for(j=0;j<n_puntos;j++)
 	{
 		fscanf(file, "%lf %lf %lf\n", &tiempo[j], &presa[j], &depredador[j]);
